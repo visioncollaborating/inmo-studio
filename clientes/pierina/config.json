@@ -1,0 +1,10 @@
+{
+  "name": "Pierina Vega",
+  "accent": "#d9a86c",
+  "font": "Roboto Slab",
+  "templates": [
+    "tip",
+    "news",
+    "property"
+  ]
+}

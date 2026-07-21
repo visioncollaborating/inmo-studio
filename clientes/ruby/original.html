@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Ruby Studio - Diseñador de publicaciones inmobiliarias">
+  <title>Ruby Studio | Lima Houses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,700;1,900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#214d69;
+      --navy-2:#12384f;
+      --blue:#0d60d6;
+      --yellow:#ffcf38;
+      --panel:#14242d;
+      --bg:#e8edf1;
+      --line:rgba(255,255,255,.13);
+      --muted:#b9c8d1;
+      --danger:#e85f70;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:Lato,Arial,sans-serif;background:var(--bg)}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .topbar{
+      position:fixed;top:0;left:0;right:0;height:58px;z-index:30;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 16px;background:#0c1d27;color:#fff;border-bottom:1px solid rgba(255,255,255,.1)
+    }
+    .topbar-left,.topbar-right{display:flex;align-items:center;gap:8px}
+    .top-title{font-weight:900;margin-right:10px}
+    .topbtn{
+      height:36px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);
+      color:#fff;border-radius:10px;padding:0 12px;font-size:12px;font-weight:900
+    }
+    .topbtn.primary{background:var(--yellow);color:#163248;border-color:transparent}
+    .app{display:grid;grid-template-columns:410px minmax(0,1fr);min-height:100vh;padding-top:58px}
+    .panel{
+      background:var(--panel);color:#fff;padding:22px;overflow:auto;height:calc(100vh - 58px);position:sticky;top:58px
+    }
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+    .mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--yellow),#ffea8c);color:#17364a;display:grid;place-items:center;font-weight:900}
+    .brand h1{margin:0;font-size:18px}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+    .type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .type-btn{
+      border:1px solid var(--line);background:rgba(255,255,255,.06);color:#dce7ec;
+      border-radius:12px;padding:11px 6px;font-size:11px;font-weight:900
+    }
+    .type-btn.active{background:var(--yellow);color:#17364a;border-color:transparent}
+    .section{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+    .section h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#d2dfe5;margin:0 0 12px}
+    .hidden{display:none!important}
+    label{display:block;font-size:12px;font-weight:800;color:#dfe8ed;margin-bottom:10px}
+    input,textarea,select{
+      width:100%;margin-top:6px;border:1px solid var(--line);background:rgba(255,255,255,.07);
+      color:#fff;border-radius:11px;padding:10px 11px;outline:none
+    }
+    select option{color:#111}
+    textarea{resize:vertical;min-height:72px;line-height:1.4}
+    input[type=color]{height:42px;padding:4px}
+    input[type=range]{padding:0}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .file{
+      display:block;border:1px dashed rgba(255,255,255,.25);padding:11px;border-radius:12px;
+      text-align:center;color:#c9d5dc;font-size:12px;cursor:pointer;margin-bottom:9px
+    }
+    .file input{display:none}
+    .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    .btn{
+      border:0;border-radius:12px;padding:12px 14px;font-weight:900;
+      display:flex;align-items:center;justify-content:center;gap:8px
+    }
+    .btn-primary{background:var(--yellow);color:#17364a}
+    .btn-light{background:#fff;color:#14242d}
+    .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line)}
+    .btn-danger{background:rgba(232,95,112,.13);color:#ffa1af;border:1px solid rgba(232,95,112,.25)}
+    .small{font-size:11px;color:var(--muted);line-height:1.5}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+    .tab{
+      border:1px solid var(--line);background:rgba(255,255,255,.06);color:#dce7ec;
+      border-radius:10px;padding:9px 4px;font-size:11px;font-weight:900
+    }
+    .tab.active{background:var(--yellow);color:#17364a;border-color:transparent}
+    .tab.hidden{display:none}
+    .workspace{padding:22px;overflow:auto}
+    .workspace-head{
+      max-width:1140px;margin:0 auto 16px;display:flex;justify-content:space-between;align-items:center;gap:14px
+    }
+    .workspace-head h2{margin:0;font-size:19px}.workspace-head p{margin:4px 0 0;color:#64727b;font-size:13px}
+    .status{padding:9px 12px;background:#fff;border:1px solid #d4dde3;border-radius:999px;color:#66747d;font-size:12px}
+    .stage{
+      max-width:1140px;margin:auto;min-height:calc(100vh - 115px);display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:18px;
+      background:#d4dce1;border-radius:24px;padding:22px
+    }
+    .canvas-area{display:grid;place-items:center;overflow:auto}
+    .canvas-shell{position:relative;background:#fff;box-shadow:0 28px 75px rgba(19,39,51,.23)}
+    canvas{display:block}
+    .hint{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.58);color:#fff;padding:7px 10px;border-radius:999px;font-size:11px;pointer-events:none}
+    .thumbs{display:grid;align-content:start;gap:12px}
+    .thumb{background:#fff;border:2px solid transparent;border-radius:15px;padding:8px;cursor:pointer}
+    .thumb.active{border-color:var(--blue)}
+    .thumb canvas{width:100%;border-radius:9px}.thumb span{display:block;text-align:center;margin-top:6px;font-size:11px;font-weight:900;color:#68747c}
+    @media(max-width:1080px){
+      .app{grid-template-columns:1fr}.panel{position:relative;top:0;height:auto}.stage{grid-template-columns:1fr}.thumbs{grid-template-columns:repeat(5,1fr)}
+    }
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="top-title">Ruby Studio</div>
+    <button class="topbtn" id="newBtn">Nuevo</button>
+    <button class="topbtn" id="openBtn">Abrir proyecto</button>
+    <button class="topbtn primary" id="saveBtn">Guardar proyecto</button>
+    <input id="projectInput" type="file" accept=".ruby,.json" hidden>
+  </div>
+  <div class="topbar-right">
+    <button class="topbtn" id="exportJpgTop">Exportar JPG</button>
+    <button class="topbtn" id="exportLayersTop">CapCut</button>
+  </div>
+</header>
+
+<div class="app">
+<aside class="panel">
+  <div class="brand">
+    <div class="mark">RH</div>
+    <div><h1>Ruby · Lima Houses</h1><p>Diseño inmobiliario 4:5</p></div>
+  </div>
+
+  <div class="type-grid">
+    <button class="type-btn active" data-type="tip">Tips / Frases</button>
+    <button class="type-btn" data-type="news">Noticias</button>
+    <button class="type-btn" data-type="property">Propiedades</button>
+  </div>
+
+  <section class="section">
+    <h2>Carrusel</h2>
+    <label>Cantidad de piezas
+      <select id="count">
+        <option value="1">1 pieza</option><option value="2">2 piezas</option><option value="3">3 piezas</option><option value="4">4 piezas</option><option value="5">5 piezas</option>
+      </select>
+    </label>
+    <div class="tabs">
+      <button class="tab active" data-index="0">1</button>
+      <button class="tab hidden" data-index="1">2</button>
+      <button class="tab hidden" data-index="2">3</button>
+      <button class="tab hidden" data-index="3">4</button>
+      <button class="tab hidden" data-index="4">5</button>
+    </div>
+  </section>
+
+  <div id="coverControls">
+    <div id="tipControls" class="section">
+      <h2>Tips / Frases</h2>
+      <label class="file">Subir fotografía<input id="tipImageInput" type="file" accept="image/*"></label>
+      <label>Zoom<input id="tipZoom" type="range" min="50" max="250" value="100"></label>
+      <div class="row"><label>Posición X<input id="tipX" type="range" min="-100" max="100" value="0"></label><label>Posición Y<input id="tipY" type="range" min="-100" max="100" value="0"></label></div>
+      <label>Título<textarea id="tipTitle">¿Buscas casa? Deja de mirar solo fotos bonitas.</textarea></label>
+      <label>Texto / beneficios<textarea id="tipBody">📍 Ubicación estratégica
+🚆 Conectividad real
+💼 Estilo de vida a tu medida
+📈 Potencial de valorización</textarea></label>
+      <div class="row"><label>Fondo inferior<input id="tipBg" type="color" value="#214d69"></label><label>Texto destacado<input id="tipAccent" type="color" value="#ffcf38"></label></div>
+      <label>Altura del bloque inferior<input id="tipPanelY" type="range" min="600" max="1000" value="790"></label>
+    </div>
+
+    <div id="newsControls" class="section hidden">
+      <h2>Noticias</h2>
+      <label class="file">Subir fotografía superior<input id="newsImageInput" type="file" accept="image/*"></label>
+      <label>Zoom<input id="newsZoom" type="range" min="50" max="250" value="100"></label>
+      <div class="row"><label>Posición X<input id="newsX" type="range" min="-100" max="100" value="0"></label><label>Posición Y<input id="newsY" type="range" min="-100" max="100" value="0"></label></div>
+      <label>Titular<textarea id="newsTitle">Nueva oportunidad inmobiliaria en Lima Sur</textarea></label>
+      <label>Contenido<textarea id="newsBody">Escribe aquí el resumen de la noticia. Puedes incluir datos, contexto y una conclusión clara para tus seguidores.</textarea></label>
+      <div class="row"><label>Fondo inferior<input id="newsBg" type="color" value="#214d69"></label><label>Texto<input id="newsText" type="color" value="#ffffff"></label></div>
+      <label>Altura de fotografía<input id="newsImageH" type="range" min="380" max="850" value="620"></label>
+    </div>
+
+    <div id="propertyControls" class="section hidden">
+      <h2>Propiedades</h2>
+      <label class="file">Subir fotografía principal<input id="propertyImageInput" type="file" accept="image/*"></label>
+      <label>Zoom<input id="propertyZoom" type="range" min="50" max="250" value="100"></label>
+      <div class="row"><label>Posición X<input id="propertyX" type="range" min="-100" max="100" value="0"></label><label>Posición Y<input id="propertyY" type="range" min="-100" max="100" value="0"></label></div>
+      <div class="section" style="margin-top:12px">
+        <h2>Título principal</h2>
+        <label>Texto<textarea id="propertyTitle1">¿Buscas la sede central</textarea></label>
+        <div class="row">
+          <label>Color<input id="propertyTitleColor1" type="color" value="#ffffff"></label>
+          <label>Tamaño<input id="propertyTitleSize1" type="range" min="24" max="90" value="49"></label>
+        </div>
+        <label>Ubicación rápida
+          <select id="propertyTitlePreset1">
+            <option value="top">Arriba</option>
+            <option value="center">Centro</option>
+            <option value="bottom" selected>Abajo</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </label>
+        <div class="row">
+          <label>Posición X<input id="propertyTitleX1" type="range" min="0" max="1080" value="80"></label>
+          <label>Posición Y<input id="propertyTitleY1" type="range" min="0" max="1350" value="1030"></label>
+        </div>
+        <label>Ancho del bloque<input id="propertyTitleW1" type="range" min="200" max="1000" value="900"></label>
+        <label>Alineación
+          <select id="propertyTitleAlign1">
+            <option value="left">Izquierda</option>
+            <option value="center" selected>Centro</option>
+            <option value="right">Derecha</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="section" style="margin-top:12px">
+        <h2>Segunda línea</h2>
+        <label>Texto<textarea id="propertyTitle2">PARA TU NEGOCIO EN SJM?</textarea></label>
+        <div class="row">
+          <label>Color<input id="propertyTitleColor2" type="color" value="#ffcf38"></label>
+          <label>Tamaño<input id="propertyTitleSize2" type="range" min="24" max="90" value="49"></label>
+        </div>
+        <label>Ubicación rápida
+          <select id="propertyTitlePreset2">
+            <option value="top">Arriba</option>
+            <option value="center">Centro</option>
+            <option value="bottom" selected>Abajo</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </label>
+        <div class="row">
+          <label>Posición X<input id="propertyTitleX2" type="range" min="0" max="1080" value="80"></label>
+          <label>Posición Y<input id="propertyTitleY2" type="range" min="0" max="1350" value="1095"></label>
+        </div>
+        <label>Ancho del bloque<input id="propertyTitleW2" type="range" min="200" max="1000" value="900"></label>
+        <label>Alineación
+          <select id="propertyTitleAlign2">
+            <option value="left">Izquierda</option>
+            <option value="center" selected>Centro</option>
+            <option value="right">Derecha</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="section" style="margin-top:12px">
+        <h2>Etiqueta</h2>
+        <label>Texto<input id="propertyLabel" value="ALQUILER"></label>
+        <div class="row">
+          <label>Color de fondo<input id="propertyLabelBg" type="color" value="#0d60d6"></label>
+          <label>Color de texto<input id="propertyLabelColor" type="color" value="#ffffff"></label>
+        </div>
+        <div class="row">
+          <label>Posición X<input id="propertyLabelX" type="range" min="0" max="1080" value="140"></label>
+          <label>Posición Y<input id="propertyLabelY" type="range" min="0" max="1350" value="1170"></label>
+        </div>
+        <div class="row">
+          <label>Tamaño de texto<input id="propertyLabelSize" type="range" min="18" max="60" value="29"></label>
+          <label>Alto<input id="propertyLabelH" type="range" min="48" max="120" value="74"></label>
+        </div>
+        <label>Redondeado<input id="propertyLabelRadius" type="range" min="0" max="60" value="36"></label>
+      </div>
+
+      <div class="section" style="margin-top:12px">
+        <h2>Precio</h2>
+        <label>Texto<input id="propertyPrice" value="USD 8,500"></label>
+        <div class="row">
+          <label>Color<input id="propertyPriceColor" type="color" value="#ffffff"></label>
+          <label>Tamaño<input id="propertyPriceSize" type="range" min="22" max="70" value="33"></label>
+        </div>
+        <div class="row">
+          <label>Posición X<input id="propertyPriceX" type="range" min="0" max="1080" value="540"></label>
+          <label>Posición Y<input id="propertyPriceY" type="range" min="0" max="1350" value="1222"></label>
+        </div>
+        <label>Alineación
+          <select id="propertyPriceAlign">
+            <option value="left">Izquierda</option>
+            <option value="center" selected>Centro</option>
+            <option value="right">Derecha</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="section" style="margin-top:12px">
+        <h2>Degradado</h2>
+        <div class="row">
+          <label>Color inicial<input id="propertyGradientStart" type="color" value="#04203b"></label>
+          <label>Color final<input id="propertyGradientEnd" type="color" value="#042457"></label>
+        </div>
+        <div class="row">
+          <label>Inicio vertical<input id="propertyGradientY" type="range" min="0" max="1200" value="580"></label>
+          <label>Intensidad<input id="propertyGradientOpacity" type="range" min="0" max="100" value="58"></label>
+        </div>
+        <label>Dirección
+          <select id="propertyGradientDirection">
+            <option value="vertical" selected>Vertical</option>
+            <option value="diagonal-left">Diagonal izquierda</option>
+            <option value="diagonal-right">Diagonal derecha</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="secondaryControls" class="section hidden">
+    <h2>Imagen secundaria</h2>
+    <p class="small">Las páginas 2 a 5 solo contienen una fotografía.</p>
+    <label class="file">Subir imagen<input id="secondaryImageInput" type="file" accept="image/*"></label>
+    <label>Zoom<input id="secondaryZoom" type="range" min="50" max="250" value="100"></label>
+    <div class="row"><label>Posición X<input id="secondaryX" type="range" min="-100" max="100" value="0"></label><label>Posición Y<input id="secondaryY" type="range" min="-100" max="100" value="0"></label></div>
+  </div>
+
+  <section class="section">
+    <h2>Exportación</h2>
+    <div class="toolbar">
+      <button class="btn btn-primary" id="jpgBtn">JPG actual</button>
+      <button class="btn btn-light" id="carouselBtn">Carrusel JPG</button>
+      <button class="btn btn-ghost" id="layersBtn">Capas CapCut</button>
+      <button class="btn btn-danger" id="resetBtn">Restablecer</button>
+    </div>
+  </section>
+</aside>
+
+<main class="workspace">
+  <div class="workspace-head">
+    <div><h2 id="workspaceTitle">Tips / Frases</h2><p>Instagram 4:5 · 1080 × 1350 px · Lato</p></div>
+    <div class="status" id="status">Diseño actualizado</div>
+  </div>
+  <div class="stage">
+    <div class="canvas-area"><div class="canvas-shell" id="shell"><canvas id="canvas" width="1080" height="1350"></canvas><div class="hint">1080 × 1350 px</div></div></div>
+    <div class="thumbs">
+      <div class="thumb active" data-index="0"><canvas width="216" height="270"></canvas><span>Carátula</span></div>
+      <div class="thumb hidden" data-index="1"><canvas width="216" height="270"></canvas><span>Imagen 2</span></div>
+      <div class="thumb hidden" data-index="2"><canvas width="216" height="270"></canvas><span>Imagen 3</span></div>
+      <div class="thumb hidden" data-index="3"><canvas width="216" height="270"></canvas><span>Imagen 4</span></div>
+      <div class="thumb hidden" data-index="4"><canvas width="216" height="270"></canvas><span>Imagen 5</span></div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+const W=1080,H=1350,canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d'),shell=document.getElementById('shell');
+const blankSecondary=()=>({image:null,zoom:100,x:0,y:0});
+const state={
+  type:'tip',count:1,current:0,
+  tip:{image:null,zoom:100,x:0,y:0,title:'¿Buscas casa? Deja de mirar solo fotos bonitas.',body:'📍 Ubicación estratégica\n🚆 Conectividad real\n💼 Estilo de vida a tu medida\n📈 Potencial de valorización',bg:'#214d69',accent:'#ffcf38',panelY:790},
+  news:{image:null,zoom:100,x:0,y:0,title:'Nueva oportunidad inmobiliaria en Lima Sur',body:'Escribe aquí el resumen de la noticia. Puedes incluir datos, contexto y una conclusión clara para tus seguidores.',bg:'#214d69',text:'#ffffff',imageH:620},
+  property:{image:null,zoom:100,x:0,y:0,
+title1:'¿Buscas la sede central',title2:'PARA TU NEGOCIO EN SJM?',
+titleColor1:'#ffffff',titleColor2:'#ffcf38',
+titleSize1:49,titleSize2:49,titleX1:90,titleY1:1000,titleW1:900,titleAlign1:'center',titlePreset1:'bottom',
+titleX2:90,titleY2:1070,titleW2:900,titleAlign2:'center',titlePreset2:'bottom',
+label:'ALQUILER',labelBg:'#0d60d6',labelColor:'#ffffff',labelX:140,labelY:1170,labelSize:29,labelH:74,labelRadius:36,
+price:'USD 8,500',priceColor:'#ffffff',priceSize:33,priceX:540,priceY:1222,priceAlign:'center',
+gradientStart:'#04203b',gradientEnd:'#042457',gradientY:580,gradientOpacity:58,gradientDirection:'vertical'},
+  secondary:[blankSecondary(),blankSecondary(),blankSecondary(),blankSecondary()]
+};
+
+function rr(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r)}
+function cover(c,img,x,y,w,h,zoom=100,px=0,py=0){
+  c.save();rr(c,x,y,w,h,0);c.clip();
+  if(!img){c.fillStyle='#d9e0e4';c.fillRect(x,y,w,h);c.fillStyle='#70808a';c.font='700 28px Lato';c.textAlign='center';c.fillText('Agregar imagen',x+w/2,y+h/2);c.textAlign='left';c.restore();return}
+  const ratio=Math.max(w/img.width,h/img.height)*(zoom/100),dw=img.width*ratio,dh=img.height*ratio;
+  c.drawImage(img,x+(w-dw)/2+(px/100)*w*.5,y+(h-dh)/2+(py/100)*h*.5,dw,dh);c.restore()
+}
+function wrap(c,text,x,y,maxW,lineH,maxLines,align='left'){
+  const words=String(text||'').split(/\s+/);let line='',lines=[];
+  for(const word of words){const t=line?line+' '+word:word;if(c.measureText(t).width>maxW&&line){lines.push(line);line=word}else line=t}
+  if(line)lines.push(line);lines=lines.slice(0,maxLines);
+  c.textAlign=align;const tx=align==='center'?x+maxW/2:align==='right'?x+maxW:x;
+  lines.forEach((l,i)=>c.fillText(l,tx,y+i*lineH));c.textAlign='left'
+}
+function drawTip(c,layer='all'){
+  const s=state.tip;
+  if(layer==='all'||layer==='photo')cover(c,s.image,0,0,W,H,s.zoom,s.x,s.y);
+  if(layer==='all'||layer==='panel'){c.fillStyle=s.bg;c.fillRect(0,s.panelY,W,H-s.panelY);c.strokeStyle='#fff';c.lineWidth=4;c.beginPath();c.moveTo(520,s.panelY+70);c.lineTo(520,H-50);c.stroke()}
+  if(layer==='all'||layer==='title'){c.fillStyle=s.accent;c.font='italic 900 48px Lato';wrap(c,s.title,50,s.panelY+135,410,62,4)}
+  if(layer==='all'||layer==='body'){c.fillStyle='#fff';c.font='italic 700 32px Lato';wrap(c,s.body,555,s.panelY+118,470,55,6)}
+}
+function drawNews(c,layer='all'){
+  const s=state.news,ih=s.imageH;
+  if(layer==='all'||layer==='photo')cover(c,s.image,0,0,W,ih,s.zoom,s.x,s.y);
+  if(layer==='all'||layer==='panel'){c.fillStyle=s.bg;c.fillRect(0,ih,W,H-ih)}
+  if(layer==='all'||layer==='title'){c.fillStyle=s.text;c.font='900 48px Lato';wrap(c,s.title,65,ih+105,950,60,4)}
+  if(layer==='all'||layer==='body'){c.fillStyle=s.text;c.font='400 29px Lato';wrap(c,s.body,65,ih+355,950,43,11)}
+}
+
+function applyPropertyTitlePreset(which,preset){
+  const s=state.property;
+  const isFirst=which===1;
+  const size=isFirst?s.titleSize1:s.titleSize2;
+  const w=isFirst?s.titleW1:s.titleW2;
+  let x=(W-w)/2;
+  let y=1030;
+
+  if(preset==='top') y=isFirst?120:200;
+  if(preset==='center') y=isFirst?560:640;
+  if(preset==='bottom') y=isFirst?1030:1095;
+  if(preset==='custom') return;
+
+  if(isFirst){s.titleX1=x;s.titleY1=y}
+  else{s.titleX2=x;s.titleY2=y}
+}
+
+function drawPropertyTitleBlock(c,text,x,y,w,size,color,align,maxLines=3){
+  c.fillStyle=color;
+  c.font=`900 ${size}px Lato`;
+  wrap(c,text,x,y,w,size*1.25,maxLines,align);
+}
+
+
+function safeNumber(value,fallback){
+  const n=Number(value);
+  return Number.isFinite(n)?n:fallback;
+}
+function safeText(value,fallback=''){
+  return value===undefined||value===null?fallback:String(value);
+}
+function hexRgba(hex,alpha){
+  const h=(hex||'#000000').replace('#','');
+  const r=parseInt(h.slice(0,2),16)||0;
+  const g=parseInt(h.slice(2,4),16)||0;
+  const b=parseInt(h.slice(4,6),16)||0;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+function gradientForProperty(c,s){
+  const y=safeNumber(s.gradientY,580);
+  const opacity=safeNumber(s.gradientOpacity,58)/100;
+  let g;
+  if(s.gradientDirection==='diagonal-left') g=c.createLinearGradient(W,y,0,H);
+  else if(s.gradientDirection==='diagonal-right') g=c.createLinearGradient(0,y,W,H);
+  else g=c.createLinearGradient(0,y,0,H);
+  g.addColorStop(0,hexRgba(s.gradientStart||'#04203b',0));
+  g.addColorStop(1,hexRgba(s.gradientEnd||'#042457',opacity));
+  return g;
+}
+function drawLabel(c,s){
+  const text=safeText(s.label,'ALQUILER');
+  const size=safeNumber(s.labelSize,29);
+  const h=safeNumber(s.labelH,74);
+  const x=safeNumber(s.labelX,140);
+  const y=safeNumber(s.labelY,1170);
+  c.font=`900 ${size}px Lato`;
+  const width=Math.max(180,c.measureText(text).width+58);
+  c.fillStyle=s.labelBg||'#0d60d6';
+  rr(c,x,y,width,h,safeNumber(s.labelRadius,36));
+  c.fill();
+  c.fillStyle=s.labelColor||'#ffffff';
+  c.textAlign='center';
+  c.textBaseline='middle';
+  c.fillText(text,x+width/2,y+h/2+1);
+  c.textAlign='left';
+  c.textBaseline='alphabetic';
+}
+function drawPrice(c,s){
+  const text=safeText(s.price,'USD 8,500');
+  const x=safeNumber(s.priceX,540);
+  const y=safeNumber(s.priceY,1222);
+  const align=s.priceAlign||'center';
+  c.fillStyle=s.priceColor||'#ffffff';
+  c.font=`900 ${safeNumber(s.priceSize,33)}px Lato`;
+  c.textAlign=align;
+  c.fillText(text,x,y);
+  c.textAlign='left';
+}
+
+function drawProperty(c,layer='all'){
+  const s=state.property;
+
+  if(layer==='all'||layer==='photo'){
+    cover(c,s.image,0,0,W,H,safeNumber(s.zoom,100),safeNumber(s.x,0),safeNumber(s.y,0));
+    c.fillStyle=gradientForProperty(c,s);
+    c.fillRect(0,0,W,H);
+  }
+
+  if(layer==='all'||layer==='title1'){
+    drawPropertyTitleBlock(
+      c,
+      safeText(s.title1,'¿Buscas la sede central'),
+      safeNumber(s.titleX1,90),
+      safeNumber(s.titleY1,1000),
+      safeNumber(s.titleW1,900),
+      safeNumber(s.titleSize1,49),
+      s.titleColor1||'#ffffff',
+      s.titleAlign1||'center',
+      3
+    );
+  }
+
+  if(layer==='all'||layer==='title2'){
+    drawPropertyTitleBlock(
+      c,
+      safeText(s.title2,'PARA TU NEGOCIO EN SJM?'),
+      safeNumber(s.titleX2,90),
+      safeNumber(s.titleY2,1070),
+      safeNumber(s.titleW2,900),
+      safeNumber(s.titleSize2,49),
+      s.titleColor2||'#ffcf38',
+      s.titleAlign2||'center',
+      3
+    );
+  }
+
+  if(layer==='all'||layer==='label') drawLabel(c,s);
+  if(layer==='all'||layer==='price') drawPrice(c,s);
+}
+function drawSecondary(c,index){const s=state.secondary[index-1];cover(c,s.image,0,0,W,H,s.zoom,s.x,s.y)}
+function compose(target,index=state.current,layer='all'){
+  const c=target.getContext('2d');c.clearRect(0,0,W,H);
+  if(index>0){drawSecondary(c,index);return}
+  if(state.type==='tip')drawTip(c,layer);
+  if(state.type==='news')drawNews(c,layer);
+  if(state.type==='property')drawProperty(c,layer)
+}
+function render(){compose(canvas);renderThumbs();fit();saveLocal()}
+function renderThumbs(){document.querySelectorAll('.thumb canvas').forEach((tc,i)=>{const b=document.createElement('canvas');b.width=W;b.height=H;compose(b,i);const t=tc.getContext('2d');t.clearRect(0,0,216,270);t.drawImage(b,0,0,216,270)})}
+function fit(){const maxW=Math.min(700,innerWidth>1080?700:innerWidth-30),maxH=760,sc=Math.min(maxW/W,maxH/H,1);shell.style.width=W*sc+'px';shell.style.height=H*sc+'px';canvas.style.width=W*sc+'px';canvas.style.height=H*sc+'px'}
+function updateUI(){
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.toggle('active',b.dataset.type===state.type));
+  tipControls.classList.toggle('hidden',state.type!=='tip');newsControls.classList.toggle('hidden',state.type!=='news');propertyControls.classList.toggle('hidden',state.type!=='property');
+  coverControls.classList.toggle('hidden',state.current>0);secondaryControls.classList.toggle('hidden',state.current===0);
+  document.querySelectorAll('.tab,.thumb').forEach((el,i)=>{el.classList.toggle('hidden',i>=state.count);el.classList.toggle('active',i===state.current)});
+  count.value=state.count;workspaceTitle.textContent=state.type==='tip'?'Tips / Frases':state.type==='news'?'Noticias':'Propiedades';
+  if(state.current===0){
+    tipZoom.value=state.tip.zoom;tipX.value=state.tip.x;tipY.value=state.tip.y;tipTitle.value=state.tip.title;tipBody.value=state.tip.body;tipBg.value=state.tip.bg;tipAccent.value=state.tip.accent;tipPanelY.value=state.tip.panelY;
+    newsZoom.value=state.news.zoom;newsX.value=state.news.x;newsY.value=state.news.y;newsTitle.value=state.news.title;newsBody.value=state.news.body;newsBg.value=state.news.bg;newsText.value=state.news.text;newsImageH.value=state.news.imageH;
+    propertyZoom.value=state.property.zoom;propertyX.value=state.property.x;propertyY.value=state.property.y;propertyTitle1.value=state.property.title1;propertyTitle2.value=state.property.title2;
+    propertyTitleColor1.value=state.property.titleColor1;propertyTitleColor2.value=state.property.titleColor2;
+    propertyTitleSize1.value=state.property.titleSize1;propertyTitleSize2.value=state.property.titleSize2;
+    propertyTitleX1.value=state.property.titleX1;propertyTitleY1.value=state.property.titleY1;propertyTitleW1.value=state.property.titleW1;propertyTitleAlign1.value=state.property.titleAlign1;propertyTitlePreset1.value=state.property.titlePreset1;
+    propertyTitleX2.value=state.property.titleX2;propertyTitleY2.value=state.property.titleY2;propertyTitleW2.value=state.property.titleW2;propertyTitleAlign2.value=state.property.titleAlign2;propertyTitlePreset2.value=state.property.titlePreset2;
+    propertyLabel.value=state.property.label||'ALQUILER';
+    propertyLabelBg.value=state.property.labelBg||'#0d60d6';
+    propertyLabelColor.value=state.property.labelColor||'#ffffff';
+    propertyLabelX.value=safeNumber(state.property.labelX,140);
+    propertyLabelY.value=safeNumber(state.property.labelY,1170);
+    propertyLabelSize.value=safeNumber(state.property.labelSize,29);
+    propertyLabelH.value=safeNumber(state.property.labelH,74);
+    propertyLabelRadius.value=safeNumber(state.property.labelRadius,36);
+    propertyPrice.value=state.property.price||'USD 8,500';
+    propertyPriceColor.value=state.property.priceColor||'#ffffff';
+    propertyPriceSize.value=safeNumber(state.property.priceSize,33);
+    propertyPriceX.value=safeNumber(state.property.priceX,540);
+    propertyPriceY.value=safeNumber(state.property.priceY,1222);
+    propertyPriceAlign.value=state.property.priceAlign||'center';
+    propertyGradientStart.value=state.property.gradientStart||'#04203b';
+    propertyGradientEnd.value=state.property.gradientEnd||'#042457';
+    propertyGradientY.value=safeNumber(state.property.gradientY,580);
+    propertyGradientOpacity.value=safeNumber(state.property.gradientOpacity,58);
+    propertyGradientDirection.value=state.property.gradientDirection||'vertical'
+  }else{
+    const s=state.secondary[state.current-1];secondaryZoom.value=s.zoom;secondaryX.value=s.x;secondaryY.value=s.y
+  }
+}
+function flash(t){status.textContent=t;setTimeout(()=>status.textContent='Diseño actualizado',1400)}
+function bind(id,fn){document.getElementById(id).oninput=e=>{fn(e.target.value);render()}}
+function loadImage(input,cb){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{cb(im);render()};im.src=e.target.result};r.readAsDataURL(f)}
+
+document.querySelectorAll('.type-btn').forEach(b=>b.onclick=()=>{state.type=b.dataset.type;updateUI();render()});
+count.onchange=e=>{state.count=+e.target.value;if(state.current>=state.count)state.current=state.count-1;updateUI();render()};
+document.querySelectorAll('.tab,.thumb').forEach(el=>el.onclick=()=>{state.current=+el.dataset.index;updateUI();render()});
+
+tipImageInput.onchange=e=>loadImage(e.target,im=>state.tip.image=im);
+newsImageInput.onchange=e=>loadImage(e.target,im=>state.news.image=im);
+propertyImageInput.onchange=e=>loadImage(e.target,im=>state.property.image=im);
+secondaryImageInput.onchange=e=>loadImage(e.target,im=>state.secondary[state.current-1].image=im);
+
+bind('tipZoom',v=>state.tip.zoom=+v);bind('tipX',v=>state.tip.x=+v);bind('tipY',v=>state.tip.y=+v);bind('tipTitle',v=>state.tip.title=v);bind('tipBody',v=>state.tip.body=v);bind('tipBg',v=>state.tip.bg=v);bind('tipAccent',v=>state.tip.accent=v);bind('tipPanelY',v=>state.tip.panelY=+v);
+bind('newsZoom',v=>state.news.zoom=+v);bind('newsX',v=>state.news.x=+v);bind('newsY',v=>state.news.y=+v);bind('newsTitle',v=>state.news.title=v);bind('newsBody',v=>state.news.body=v);bind('newsBg',v=>state.news.bg=v);bind('newsText',v=>state.news.text=v);bind('newsImageH',v=>state.news.imageH=+v);
+bind('propertyZoom',v=>state.property.zoom=+v);bind('propertyX',v=>state.property.x=+v);bind('propertyY',v=>state.property.y=+v);bind('propertyTitle1',v=>state.property.title1=v);bind('propertyTitle2',v=>state.property.title2=v);
+bind('propertyTitleColor1',v=>state.property.titleColor1=v);bind('propertyTitleColor2',v=>state.property.titleColor2=v);
+bind('propertyTitleSize1',v=>state.property.titleSize1=+v);bind('propertyTitleSize2',v=>state.property.titleSize2=+v);
+bind('propertyTitleX1',v=>{state.property.titleX1=+v;state.property.titlePreset1='custom';propertyTitlePreset1.value='custom'});
+bind('propertyTitleY1',v=>{state.property.titleY1=+v;state.property.titlePreset1='custom';propertyTitlePreset1.value='custom'});
+bind('propertyTitleW1',v=>{state.property.titleW1=+v;state.property.titlePreset1='custom';propertyTitlePreset1.value='custom'});
+bind('propertyTitleAlign1',v=>state.property.titleAlign1=v);
+bind('propertyTitleX2',v=>{state.property.titleX2=+v;state.property.titlePreset2='custom';propertyTitlePreset2.value='custom'});
+bind('propertyTitleY2',v=>{state.property.titleY2=+v;state.property.titlePreset2='custom';propertyTitlePreset2.value='custom'});
+bind('propertyTitleW2',v=>{state.property.titleW2=+v;state.property.titlePreset2='custom';propertyTitlePreset2.value='custom'});
+bind('propertyTitleAlign2',v=>state.property.titleAlign2=v);
+bind('propertyLabel',v=>state.property.label=v);
+bind('propertyLabelBg',v=>state.property.labelBg=v);
+bind('propertyLabelColor',v=>state.property.labelColor=v);
+bind('propertyLabelX',v=>state.property.labelX=+v);
+bind('propertyLabelY',v=>state.property.labelY=+v);
+bind('propertyLabelSize',v=>state.property.labelSize=+v);
+bind('propertyLabelH',v=>state.property.labelH=+v);
+bind('propertyLabelRadius',v=>state.property.labelRadius=+v);
+bind('propertyPrice',v=>state.property.price=v);
+bind('propertyPriceColor',v=>state.property.priceColor=v);
+bind('propertyPriceSize',v=>state.property.priceSize=+v);
+bind('propertyPriceX',v=>state.property.priceX=+v);
+bind('propertyPriceY',v=>state.property.priceY=+v);
+bind('propertyPriceAlign',v=>state.property.priceAlign=v);
+bind('propertyGradientStart',v=>state.property.gradientStart=v);
+bind('propertyGradientEnd',v=>state.property.gradientEnd=v);
+bind('propertyGradientY',v=>state.property.gradientY=+v);
+bind('propertyGradientOpacity',v=>state.property.gradientOpacity=+v);
+bind('propertyGradientDirection',v=>state.property.gradientDirection=v);
+
+propertyTitlePreset1.onchange=e=>{
+  state.property.titlePreset1=e.target.value;
+  applyPropertyTitlePreset(1,e.target.value);
+  updateUI();render();
+};
+propertyTitlePreset2.onchange=e=>{
+  state.property.titlePreset2=e.target.value;
+  applyPropertyTitlePreset(2,e.target.value);
+  updateUI();render();
+};
+
+bind('secondaryZoom',v=>state.secondary[state.current-1].zoom=+v);bind('secondaryX',v=>state.secondary[state.current-1].x=+v);bind('secondaryY',v=>state.secondary[state.current-1].y=+v);
+
+function safeName(){return `ruby-${state.type}-${state.current+1}`}
+function downloadCanvas(c,name,type='image/jpeg'){const a=document.createElement('a');a.download=name;a.href=c.toDataURL(type,1);a.click()}
+jpgBtn.onclick=()=>{const o=document.createElement('canvas');o.width=W;o.height=H;compose(o,state.current);downloadCanvas(o,`${safeName()}.jpg`)};
+carouselBtn.onclick=async()=>{for(let i=0;i<state.count;i++){const o=document.createElement('canvas');o.width=W;o.height=H;compose(o,i);downloadCanvas(o,`${String(i+1).padStart(2,'0')}-ruby-${state.type}.jpg`);await new Promise(r=>setTimeout(r,250))}};
+layersBtn.onclick=async()=>{
+  if(state.current>0)return alert('Las páginas 2 a 5 son imágenes simples y no se exportan por capas.');
+  const layers=state.type==='tip'?['photo','panel','title','body']:state.type==='news'?['photo','panel','title','body']:['photo','title1','title2','label','price'];
+  for(const layer of layers){const o=document.createElement('canvas');o.width=W;o.height=H;compose(o,0,layer);downloadCanvas(o,`ruby-${state.type}-${layer}.png`,'image/png');await new Promise(r=>setTimeout(r,220))}
+};
+function imgData(img){if(!img)return null;const c=document.createElement('canvas');c.width=img.width;c.height=img.height;c.getContext('2d').drawImage(img,0,0);return c.toDataURL('image/png')}
+function fromData(d){return new Promise(res=>{if(!d)return res(null);const im=new Image();im.onload=()=>res(im);im.src=d})}
+async function projectState(){return{version:1,type:state.type,count:state.count,current:state.current,tip:{...state.tip,image:imgData(state.tip.image)},news:{...state.news,image:imgData(state.news.image)},property:{...state.property,image:imgData(state.property.image)},secondary:state.secondary.map(s=>({...s,image:imgData(s.image)}))}}
+async function restoreProject(p){state.type=p.type||'tip';state.count=p.count||1;state.current=Math.min(p.current||0,state.count-1);state.tip={...state.tip,...p.tip,image:await fromData(p.tip?.image)};state.news={...state.news,...p.news,image:await fromData(p.news?.image)};state.property={...state.property,...p.property,image:await fromData(p.property?.image)};
+  if(p.property?.button && !p.property?.labelBg) state.property.labelBg=p.property.button;
+  if(p.property?.overlay!==undefined && p.property?.gradientOpacity===undefined) state.property.gradientOpacity=Math.min(100,Number(p.property.overlay)+20);state.secondary=[];for(const s of p.secondary||[])state.secondary.push({...blankSecondary(),...s,image:await fromData(s.image)});while(state.secondary.length<4)state.secondary.push(blankSecondary());updateUI();render();flash('Proyecto abierto')}
+saveBtn.onclick=async()=>{const blob=new Blob([JSON.stringify(await projectState())],{type:'application/json'});const a=document.createElement('a');a.download=`ruby-${state.type}.ruby`;a.href=URL.createObjectURL(blob);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+openBtn.onclick=()=>projectInput.click();projectInput.onchange=async e=>{try{await restoreProject(JSON.parse(await e.target.files[0].text()))}catch(err){alert('No se pudo abrir el proyecto.')}e.target.value=''};
+newBtn.onclick=resetBtn.onclick=()=>{if(confirm('¿Crear un proyecto nuevo?')){localStorage.removeItem('rubyStudio');location.reload()}};
+exportJpgTop.onclick=()=>jpgBtn.click();exportLayersTop.onclick=()=>layersBtn.click();
+function saveLocal(){const clean={type:state.type,count:state.count,current:state.current,tip:{...state.tip,image:null},news:{...state.news,image:null},property:{...state.property,image:null},secondary:state.secondary.map(s=>({...s,image:null}))};localStorage.setItem('rubyStudio',JSON.stringify(clean))}
+function loadLocal(){const s=JSON.parse(localStorage.getItem('rubyStudio')||'null');if(!s)return;Object.assign(state,s);state.tip={...state.tip,...s.tip,image:null};state.news={...state.news,...s.news,image:null};state.property={...state.property,...s.property,image:null};
+  if(s.property?.button && !s.property?.labelBg) state.property.labelBg=s.property.button;
+  if(s.property?.overlay!==undefined && s.property?.gradientOpacity===undefined) state.property.gradientOpacity=Math.min(100,Number(s.property.overlay)+20);state.secondary=(s.secondary||[]).map(x=>({...blankSecondary(),...x,image:null}));while(state.secondary.length<4)state.secondary.push(blankSecondary())}
+window.addEventListener('resize',fit);loadLocal();updateUI();render();
+</script>
+</body>
+</html>

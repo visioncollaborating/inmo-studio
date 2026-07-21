@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6e7cff"/><stop offset=".52" stop-color="#8a5cf6"/><stop offset="1" stop-color="#25c7b8"/></linearGradient></defs>
+  <rect width="88" height="88" y="4" rx="22" fill="url(#g)"/>
+  <path d="M21 64V38l23-14 23 14v26H53V48H36v16H21Z" fill="none" stroke="#fff" stroke-width="6.5" stroke-linejoin="round"/>
+  <path d="M44 24v24" stroke="#fff" stroke-width="6.5" stroke-linecap="round"/>
+  <text x="110" y="47" font-family="Inter,Arial,sans-serif" font-size="31" font-weight="800" fill="#18202b">INMO STUDIO</text>
+  <text x="111" y="73" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="5" fill="#7b8494">PRO</text>
+</svg>

@@ -1,0 +1,10 @@
+{
+  "name": "Ruby Lima Houses",
+  "accent": "#ffcf38",
+  "font": "Lato",
+  "templates": [
+    "tip",
+    "news",
+    "property"
+  ]
+}
